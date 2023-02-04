@@ -130,3 +130,14 @@ dmypy.json
 
 # .idea
 .idea
+
+
+static/
+/static/
+*/static/
+
+media/
+/media/
+*/media/
+
+*/migrations/
