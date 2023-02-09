@@ -26,7 +26,7 @@ INSTALLED_APPS = [
 INSTALLED_APPS += [
     'rest_framework',
     'django_filters',
-    'djoser', 
+    'djoser',
 ]
 
 # apps
@@ -40,6 +40,9 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     'drf_spectacular',
 ]
+
+# Custom user model
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

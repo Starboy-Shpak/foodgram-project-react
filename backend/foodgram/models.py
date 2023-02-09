@@ -16,12 +16,12 @@ class Tag(models.Model):
         ordering = ('slug',)
 
     def __str__(self) -> str:
-        return self.name
+        return f'{self.name} (цвет: {self.color})'
 
 
 class Ingredient(models.Model):
     name = models.CharField('Название', max_length=255, unique=True)
-    unit = models.CharField('Единица измерения', max_length=32)
+    measurement_unit = models.CharField('Единица измерения', max_length=32)
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -39,8 +39,14 @@ class Recipe(models.Model):
     )
     title = models.CharField('Название рецепта', max_length=255,)
     discription = models.TextField('Описание')
+    pub_date = models.DateField(
+        'Дата публикации', auto_now_add=True, editable=False
+    )
     ingredients = models.ManyToManyField(
-        Ingredient, 'ingrediets', verbose_name='Ингридиенты'
+        Ingredient,
+        'ingredients',
+        verbose_name='Ингредиенты',
+        through='AmountIngredient',
     )
     tag = models.ManyToManyField(
         Tag, 'recipe_tags', verbose_name='Тэги'
@@ -48,11 +54,33 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField(
         'Время приготовления (в минутах)'
         )
-    # image = models.ImageField('Изображение', upload_to='recipes_image/')
+    image = models.ImageField('Изображение', upload_to='recipes_image/')
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ('title',)
 
     def __str__(self) -> str:
         return self.title
+
+
+class AmountIngredient(models.Model):
+    recipe = models.ForeignKey(
+        Recipe, models.CASCADE, 'in_recipes', verbose_name='В каких рецептах',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        models.CASCADE,
+        'used_ingredients',
+        verbose_name='ингредиенты',
+    )
+    amount = models.PositiveIntegerField('Количество')
+
+    class Meta:
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
+        ordering = ('recipe',)
+
+    def __str__(self) -> str:
+        return f'{self.amount} {self.ingredient}'
