@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from users.models import User, Subscriptions
+from users.models import Subscriptions, User
 
 
 @admin.register(User)
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email')
+    list_display = ('username', 'full_name', 'email')
     list_filter = ('email', 'username',)
     ordering = ('pk',)
 

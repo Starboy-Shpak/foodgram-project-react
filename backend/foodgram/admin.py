@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import TabularInline
 
-from foodgram.models import Recipe, Tag, Ingredient, AmountIngredient
+from foodgram.models import AmountIngredient, Favorite, Ingredient, Recipe, Tag
 
 
 ##############################
@@ -31,3 +31,11 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     list_filter = ('name',)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    """
+    Администрирование добавления рецептов в избранное.
+    """
+    list_display = ('user', 'recipe')

@@ -1,9 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import UniqueConstraint
 
 User = get_user_model()
 
 
+#######################
+# MAIN MODELS
+#######################
 class Tag(models.Model):
     name = models.CharField('Наименование', max_length=64, unique=True)
     color = models.CharField(u'Цвет', max_length=7,
@@ -65,6 +69,9 @@ class Recipe(models.Model):
         return self.title
 
 
+#######################
+# OTHER MODELS
+#######################
 class AmountIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe, models.CASCADE, 'in_recipes', verbose_name='В каких рецептах',
@@ -84,3 +91,56 @@ class AmountIngredient(models.Model):
 
     def __str__(self) -> str:
         return f'{self.amount} {self.ingredient}'
+
+
+class Favorite(models.Model):
+    """
+    Модель избранных рецептов.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE, related_name='favorites',
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name='favorites',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        verbose_name = 'Избранное'
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite_recipe'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} добавил в избранное "{self.recipe}"'
+
+
+class ShoppingList(models.Model):
+    """
+    Модель списка покупок.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='shopping_cart',
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name='shopping_cart',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_shopping_cart'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} добавил "{self.recipe}" в список покупок'
