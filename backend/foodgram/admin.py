@@ -35,7 +35,4 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """
-    Администрирование добавления рецептов в избранное.
-    """
     list_display = ('user', 'recipe')

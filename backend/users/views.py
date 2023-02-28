@@ -1,7 +1,7 @@
+from config.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -14,17 +14,11 @@ from .serializers import FollowSerializer, UserSerializer
 User = get_user_model()
 
 
-@extend_schema_view(
-    post=extend_schema(summary='Регистрация пользователя', tags=['Аутентификация & Авторизация']),
-    get=extend_schema(summary='Профиль пользователя', tags=['Пользователи']),
-    put=extend_schema(summary='Изменить профиль пользователя', tags=['Пользователи']),
-    patch=extend_schema(summary='Изменить частично профиль пользователя', tags=['Пользователи']),
-    delete=extend_schema(summary='Удалить профиль пользователя', tags=['Пользователи']),
-    list=extend_schema(summary='Список пользователей Search', tags=['Словари']),
-)
 class FoodgramUsersViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = CustomPagination
+
 
     @action(
         ['post', 'delete'], True, permission_classes=[IsAuthenticated],
@@ -48,7 +42,7 @@ class FoodgramUsersViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = User.objects.filter(following__user=user)
+        queryset = User.objects.filter(author__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = FollowSerializer(
             pages, many=True, context={'request': request}

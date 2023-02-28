@@ -94,9 +94,6 @@ class AmountIngredient(models.Model):
 
 
 class Favorite(models.Model):
-    """
-    Модель избранных рецептов.
-    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE, related_name='favorites',
@@ -121,9 +118,6 @@ class Favorite(models.Model):
 
 
 class ShoppingList(models.Model):
-    """
-    Модель списка покупок.
-    """
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='shopping_cart',
         verbose_name='Пользователь'

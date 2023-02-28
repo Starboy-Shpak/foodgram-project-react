@@ -6,7 +6,6 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
@@ -21,14 +20,11 @@ from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthorPermission
 from .serializers import (CreateRecipeSerializer, FavoriteRecipesSerializer,
                           IngredientSerializer, RecipeReadSerializer,
-                          ShoppingCartSerializer, TagSerializer)
+                          TagSerializer)
 
 User = get_user_model()
 
-@extend_schema_view(
-    get=extend_schema(summary='Ингредиенты рецепта', tags=['Ингредиенты']),
-    list=extend_schema(summary='Список тэгов Search', tags=['Ингредиенты']),
-)
+
 class IngredintViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
@@ -38,10 +34,6 @@ class IngredintViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-@extend_schema_view(
-    get=extend_schema(summary='Тэг рецепта', tags=['Тэги']),
-    list=extend_schema(summary='Список тэгов Search', tags=['Тэги']),
-)
 class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
@@ -49,14 +41,6 @@ class TagViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
 
-@extend_schema_view(
-    perform_create=extend_schema(summary='Создать рецепт', tags=['Рецепты']),
-    get=extend_schema(summary='Получить рецепт', tags=['Рецепты']),
-    put=extend_schema(summary='Изменить рецепт', tags=['Рецепты']),
-    patch=extend_schema(summary='Изменить частично рецепт', tags=['Рецепты']),
-    delete=extend_schema(summary='Удалить рецепт', tags=['Рецепты']),
-    list=extend_schema(summary='Список рецептов Search', tags=['Рецепты']),
-)
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = CreateRecipeSerializer
     queryset = Recipe.objects.all()

@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from foodgram.serializers import FavoriteRecipesSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
@@ -51,11 +50,12 @@ class FollowSerializer(CustomUserSerializer):
     recipes = SerializerMethodField()
 
     class Meta:
+        model = User
         fields = (
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes_count', 'recipes',
         )
-        read_only_fields = ('email', 'username', 'first_name', 'last_name')
+        read_only_fields = '__all__',
 
     def validate(self, data):
         author_id = self.context.get(
@@ -79,6 +79,7 @@ class FollowSerializer(CustomUserSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
+        from foodgram.serializers import FavoriteRecipesSerializer
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
