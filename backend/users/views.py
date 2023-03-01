@@ -1,14 +1,14 @@
-from config.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from djoser.views import UserViewSet
 
-from users.models import Subscriptions
+from api.pagination import CustomPagination
 
+from .models import Subscription
 from .serializers import FollowSerializer, UserSerializer
 
 User = get_user_model()
@@ -32,11 +32,11 @@ class FoodgramUsersViewSet(UserViewSet):
                 author, data=request.data, context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
-            Subscriptions.objects.create(user=user, author=author)
+            Subscription.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            get_object_or_404(Subscriptions, user=user, author=author).delete()
+            get_object_or_404(Subscription, user=user, author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])

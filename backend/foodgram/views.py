@@ -1,10 +1,8 @@
-from datetime import datetime
-
-from config.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -13,9 +11,10 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from foodgram.models import (AmountIngredient, Favorite, Ingredient, Recipe,
-                             ShoppingList, Tag)
+from api.pagination import CustomPagination
 
+from .models import (AmountIngredient, Favorite, Ingredient, Recipe,
+                     ShoppingList, Tag)
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import AuthorPermission
 from .serializers import (CreateRecipeSerializer, FavoriteRecipesSerializer,
@@ -114,14 +113,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
-        today = datetime.today()
+        ).annotate(quantity=Sum('amount'))
+        today = timezone.now().day
         shopping_list = (
             f'Список покупок пользователя: {user}\n'
             f'Дата: {today:%Y-%m-%d}\n'
         )
         shopping_list += '\n'.join([
-            f'- {ingredient["ingredient__name"]} - {ingredient["amount"]} '
+            f'- {ingredient["ingredient__name"]} - {ingredient["quantity"]} '
             f'{ingredient["ingredient__measurement_unit"]}'
             for ingredient in ingredients
         ])

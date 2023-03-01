@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
+from djoser.serializers import UserCreateSerializer, UserSerializer
 
-from users.models import Subscriptions
+from .models import Subscription
 
 User = get_user_model()
 
@@ -42,7 +42,7 @@ class CustomUserSerializer(UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscriptions.objects.filter(user=user, author=obj).exists()
+        return Subscription.objects.filter(user=user, author=obj).exists()
 
 
 class FollowSerializer(CustomUserSerializer):

@@ -88,6 +88,12 @@ class AmountIngredient(models.Model):
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
         ordering = ('recipe',)
+        constraints = (
+            UniqueConstraint(
+                fields=('recipe', 'ingredient', ),
+                name='unique_ingredient',
+            ),
+        )
 
     def __str__(self) -> str:
         return f'{self.amount} {self.ingredient}'

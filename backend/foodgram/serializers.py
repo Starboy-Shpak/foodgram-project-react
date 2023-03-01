@@ -2,10 +2,11 @@ from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+
 from users.serializers import CustomUserSerializer
 
-from foodgram.models import (AmountIngredient, Ingredient, Recipe,
-                             ShoppingList, Tag)
+from .models import (AmountIngredient, Ingredient, Recipe,
+                     ShoppingList, Tag)
 
 User = get_user_model()
 
@@ -56,10 +57,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'discription', 'cooking_time',
         )
 
-    def get_ingredients(self, obj):
-        ingredients = AmountIngredient.objects.filter(recipe=obj)
-        return AmountIngredientSerializer(ingredients, many=True).data
-
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
@@ -108,11 +105,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, ingredients):
         ingredients_list = []
         if not ingredients:
-            raise serializers.ValidationError('Отсутствуют ингридиенты')
+            raise serializers.ValidationError('Отсутствуют ингредиенты')
         for ingredient in ingredients:
             if ingredient['id'] in ingredients_list:
                 raise serializers.ValidationError(
-                    'Ингридиенты должны быть уникальны'
+                    'Ингредиенты должны быть уникальны'
                 )
             ingredients_list.append(ingredient['id'])
             if int(ingredient.get('amount')) < 1:

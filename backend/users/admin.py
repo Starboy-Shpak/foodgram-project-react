@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from users.models import Subscriptions, User
+from users.models import Subscription, User
 
 
 @admin.register(User)
@@ -10,8 +10,8 @@ class UsersAdmin(admin.ModelAdmin):
     ordering = ('pk',)
 
 
-@admin.register(Subscriptions)
-class SubscriptionsAdmin(admin.ModelAdmin):
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('author', 'user', 'date_added')
     list_filter = ('date_added',)
     ordering = ('date_added',)
