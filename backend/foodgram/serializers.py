@@ -7,6 +7,7 @@ from users.serializers import CustomUserSerializer
 from .models import (AmountIngredient, Ingredient, Recipe,
                      ShoppingList, Tag)
 
+
 User = get_user_model()
 
 

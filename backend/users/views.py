@@ -18,7 +18,6 @@ class FoodgramUsersViewSet(UserViewSet):
     serializer_class = UserSerializer
     pagination_class = CustomPagination
 
-
     @action(
         ['post', 'delete'], True, permission_classes=[IsAuthenticated],
     )

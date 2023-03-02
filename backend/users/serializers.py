@@ -89,4 +89,3 @@ class FollowSerializer(CustomUserSerializer):
             recipes, many=True, read_only=True,
         )
         return serializer.data
-
