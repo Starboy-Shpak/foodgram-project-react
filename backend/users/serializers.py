@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
+import foodgram
 from .models import Subscription
 
 User = get_user_model()
@@ -79,13 +80,13 @@ class FollowSerializer(CustomUserSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
-        from foodgram.serializers import FavoriteRecipesSerializer
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
         if limit:
             recipes = recipes[: int(limit)]
-        serializer = FavoriteRecipesSerializer(recipes, many=True,
-                                               read_only=True)
+        serializer = foodgram.serializers.FavoriteRecipesSerializer(
+            recipes, many=True, read_only=True,
+        )
         return serializer.data
 
