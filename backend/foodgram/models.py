@@ -5,9 +5,6 @@ from django.db.models import UniqueConstraint
 User = get_user_model()
 
 
-#######################
-# MAIN MODELS
-#######################
 class Tag(models.Model):
     name = models.CharField('Наименование', max_length=64, unique=True)
     color = models.CharField(u'Цвет', max_length=7,
@@ -69,9 +66,6 @@ class Recipe(models.Model):
         return self.title
 
 
-#######################
-# OTHER MODELS
-#######################
 class AmountIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe, models.CASCADE, 'in_recipes', verbose_name='В каких рецептах',

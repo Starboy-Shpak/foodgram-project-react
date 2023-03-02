@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from djoser.views import UserViewSet
 
 from api.pagination import CustomPagination
-
 from .models import Subscription
 from .serializers import FollowSerializer, UserSerializer
 

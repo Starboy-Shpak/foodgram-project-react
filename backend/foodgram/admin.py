@@ -4,17 +4,11 @@ from django.contrib.admin import TabularInline
 from foodgram.models import AmountIngredient, Favorite, Ingredient, Recipe, Tag
 
 
-##############################
-# INLINES
-##############################
 class IngredientInline(TabularInline):
     model = AmountIngredient
     extra = 2
 
 
-##############################
-# MODELS
-##############################
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'author')
