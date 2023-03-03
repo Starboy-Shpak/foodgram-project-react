@@ -36,11 +36,6 @@ INSTALLED_APPS += [
     'foodgram',
 ]
 
-# after apps
-INSTALLED_APPS += [
-    'drf_spectacular',
-]
-
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
 
@@ -109,8 +104,6 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
     ],
-
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 AUTH_PASSWORD_VALIDATORS = [
     {
