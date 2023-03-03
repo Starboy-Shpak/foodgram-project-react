@@ -12,10 +12,8 @@ services:
     image: starboyshpak/foodgram_backend:latest
     restart: always
     volumes:
-      - data_value:/app/data/
       - static_value:/app/static/
       - media_value:/app/media/
-      - docs:/app/docs/
     depends_on:
       - db
     env_file:
@@ -47,5 +45,3 @@ volumes:
   postgres_data:
   static_value:
   media_value:
-  data_value:
-  docs:
