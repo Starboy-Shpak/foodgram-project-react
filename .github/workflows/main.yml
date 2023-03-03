@@ -64,7 +64,7 @@ jobs:
             cd infra/
             sudo docker compose stop
             sudo docker compose rm backend
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/foodgram-project-backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-project-backend:latest
             touch .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
