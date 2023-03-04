@@ -3,8 +3,6 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from foodgram.models import (Favourite, Ingredient, Recipe, RecipeIngredients,
-                             ShoppingCart, Tag)
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
@@ -12,7 +10,7 @@ from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import IngredientsFilter, RecipesFilter
+from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPagination
 from api.permissions import IsAdminOrReadOnly
 from api.serializers import (CustomUserSerializer, FavouriteSerializer,
@@ -20,6 +18,8 @@ from api.serializers import (CustomUserSerializer, FavouriteSerializer,
                              MyIngredientSerializer, MyTagSerializer,
                              PostMyRecipeSerializer, ShoppingCartSerializer)
 from users.models import Subscription, User
+from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
+                             ShoppingList, Tag)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -76,7 +76,7 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = None
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filterset_class = RecipesFilter
+    filterset_class = RecipeFilter
     pagination_class = CustomPagination
 
     def get_serializer_class(self):
@@ -107,11 +107,11 @@ class RecipeViewSet(ModelViewSet):
         methods=['POST'],
         permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
-        return self.post_action(Favourite, FavouriteSerializer, request, pk)
+        return self.post_action(Favorite, FavouriteSerializer, request, pk)
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
-        return self.delete_action(Favourite, request, pk)
+        return self.delete_action(Favorite, request, pk)
 
     @action(
         detail=True,
@@ -119,7 +119,7 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         return self.post_action(
-            ShoppingCart,
+            ShoppingList,
             ShoppingCartSerializer,
             request,
             pk)
@@ -127,7 +127,7 @@ class RecipeViewSet(ModelViewSet):
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
         return self.delete_action(
-            ShoppingCart,
+            ShoppingList,
             request,
             pk)
 
@@ -136,11 +136,11 @@ class RecipeViewSet(ModelViewSet):
         methods=['GET'],
         permission_classes=(IsAuthenticated,),)
     def download_shopping_cart(self, request):
-        queryset = RecipeIngredients.objects.filter(
+        queryset = AmountIngredient.objects.filter(
             recipe__shopping_cart__user=request.user
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
-        ).order_by('ingredient__name').annotate(amount=Sum('amount'))
+        ).order_by('ingredient__name').annotate(quantity=Sum('amount'))
 
         return self.sending(queryset)
 
@@ -179,4 +179,4 @@ class IngredientViewSet(ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     pagination_class = None
-    filterset_class = IngredientsFilter
+    filterset_class = IngredientFilter

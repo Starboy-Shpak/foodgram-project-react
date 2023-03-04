@@ -6,8 +6,8 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import (IntegerField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField)
 
-from foodgram.models import (Favourite, Ingredient, Recipe, RecipeIngredients,
-                             ShoppingCart, Tag)
+from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
+                             ShoppingList, Tag)
 from users.models import User
 
 
@@ -96,7 +96,7 @@ class RecipeIngredientsSerializer(ModelSerializer):
         source='ingredient.measurement_unit')
 
     class Meta:
-        model = RecipeIngredients
+        model = AmountIngredient
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
@@ -117,7 +117,7 @@ class GetMyRecipeSerializer(ModelSerializer):
                   'title', 'image', 'discription', 'cooking_time',)
 
     def get_ingredients_for_recipe(self, obj):
-        ingredients = RecipeIngredients.objects.filter(recipe=obj)
+        ingredients = AmountIngredient.objects.filter(recipe=obj)
 
         return RecipeIngredientsSerializer(ingredients, many=True).data
 
@@ -141,7 +141,7 @@ class AddIngredientsToRecipe(ModelSerializer):
     amount = IntegerField()
 
     class Meta:
-        model = RecipeIngredients
+        model = AmountIngredient
         fields = ('id', 'amount')
 
 
@@ -196,8 +196,8 @@ class PostMyRecipeSerializer(ModelSerializer):
     @staticmethod
     def get_ingredients(recipe=None, ingredients=None):
         for ingredient in ingredients:
-            RecipeIngredients.objects.bulk_create(
-                [RecipeIngredients(
+            AmountIngredient.objects.bulk_create(
+                [AmountIngredient(
                     recipe=recipe,
                     ingredient=Ingredient.objects.get(id=ingredient['id']),
                     amount=ingredient['amount']
@@ -232,11 +232,11 @@ class FavouriteSerializer(ModelSerializer):
     '''Сериалайзер добавления в избранное'''
 
     class Meta:
-        model = Favourite
+        model = Favorite
         fields = ('user', 'recipe')
 
     def validate(self, data):
-        if Favourite.objects.filter(
+        if Favorite.objects.filter(
             user=data.get('user'),
             recipe=data.get('recipe')
         ).exists():
@@ -253,11 +253,11 @@ class ShoppingCartSerializer(ModelSerializer):
     '''Сериалайзер добавления в корзину'''
 
     class Meta:
-        model = ShoppingCart
+        model = ShoppingList
         fields = ('user', 'recipe')
 
     def validate(self, data):
-        if ShoppingCart.objects.filter(
+        if ShoppingList.objects.filter(
             user=data.get('user'),
             recipe=data.get('recipe')
         ).exists():
