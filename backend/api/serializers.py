@@ -221,14 +221,30 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, data):
-        if 'tags' in data:
-            instance.tags.set(
-                data.pop('tags'))
-        if 'ingredients' in data:
-            ingredients = data.pop('ingredients')
-            instance.ingredients.clear()
-            self.create_ingredients(ingredients, instance)
-        return super().update(instance, data)
+        instance.name = data.get('name', instance.name)
+        instance.text = data.get('text', instance.text)
+        instance.image = data.get('image', instance.image)
+        instance.cooking_time = data.get(
+            'cooking_time', instance.cooking_time)
+        ingredients = data.pop('recipe_ingredients')
+        tags = data.pop('tags')
+        instance.tags.clear()
+        instance.tags.add(*tags)
+        instance.ingredients.clear()
+        recipe = instance
+        self.save_ingredients(recipe, ingredients)
+        instance.save()
+        return instance
+
+        # if 'tags' in data:
+        #     instance.tags.set(
+        #         data.pop('tags'))
+        # if 'ingredients' in data:
+        #     ingredients = data.pop('ingredients')
+        #     instance.ingredients.clear()
+        #     self.create_ingredients(ingredients, instance)
+        # super().update(instance, data)
+        # return
 
     def to_representation(self, instance):
         return RecipeReadSerializer(instance, context={
