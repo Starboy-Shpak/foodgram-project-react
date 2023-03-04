@@ -16,12 +16,12 @@ from api.pagination import CustomPagination
 from foodgram.models import (AmountIngredient, Favorite, Ingredient, Recipe,
                              ShoppingList, Tag)
 from users.models import Subscription
-from .filters import IngredientFilter, RecipeFilter
-from .permissions import AuthorPermission
-from .serializers import (FollowSerializer, CustomUserSerializer,
-                          CreateRecipeSerializer, FavoriteRecipesSerializer,
-                          IngredientSerializer, RecipeReadSerializer,
-                          TagSerializer, ShoppingCartSerializer)
+from api.filters import IngredientFilter, RecipeFilter
+from api.permissions import AuthorPermission
+from api.serializers import (FollowSerializer, CustomUserSerializer,
+                             CreateRecipeSerializer, FavoriteRecipesSerializer,
+                             IngredientSerializer, RecipeReadSerializer,
+                             TagSerializer, ShoppingCartSerializer)
 
 User = get_user_model()
 
