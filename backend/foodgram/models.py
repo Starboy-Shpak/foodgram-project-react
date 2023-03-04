@@ -129,12 +129,12 @@ class ShoppingList(models.Model):
     )
 
     class Meta:
-        default_related_name = 'shopping_list'
+        default_related_name = 'shopping_cart'
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
         constraints = [
             UniqueConstraint(
-                fields=['user', 'recipe'], name='unique_shopping_list'
+                fields=['user', 'recipe'], name='unique_shopping_cart'
             )
         ]
 

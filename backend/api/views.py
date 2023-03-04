@@ -116,15 +116,15 @@ class RecipeViewSet(ModelViewSet):
         detail=True,
         methods=['POST'],
         permission_classes=(IsAuthenticated,))
-    def shopping_list(self, request, pk):
+    def shopping_cart(self, request, pk):
         return self.post_action(
             ShoppingList,
             ShoppingListSerializer,
             request,
             pk)
 
-    @shopping_list.mapping.delete
-    def delete_shopping_list(self, request, pk):
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk):
         return self.delete_action(
             ShoppingList,
             request,
@@ -134,9 +134,9 @@ class RecipeViewSet(ModelViewSet):
         detail=False,
         methods=['GET'],
         permission_classes=(IsAuthenticated,),)
-    def download_shopping_list(self, request):
+    def download_shopping_cart(self, request):
         queryset = AmountIngredient.objects.filter(
-            recipe__shopping_list__user=request.user
+            recipe__shopping_cart__user=request.user
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).order_by('ingredient__name').annotate(amount=Sum('amount'))

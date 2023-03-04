@@ -28,7 +28,7 @@ class User(AbstractUser):
 
 class Subscription(models.Model):
     author = models.ForeignKey(
-        User, models.CASCADE, 'author', verbose_name='Автор',
+        User, models.CASCADE, 'following', verbose_name='Автор',
     )
     user = models.ForeignKey(
         User, models.CASCADE, 'follower', verbose_name='Подписчик',
