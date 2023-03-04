@@ -84,7 +84,7 @@ class FollowSerializer(CustomUserSerializer):
         recipes = obj.recipes.all()
         if limit:
             recipes = recipes[: int(limit)]
-        serializer = FavoriteRecipesSerializer(
+        serializer = RecipeReadSerializer(
             recipes, many=True, read_only=True,
         )
         return serializer.data
