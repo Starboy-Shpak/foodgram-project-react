@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST
+# from rest_framework.status import HTTP_400_BAD_REQUEST
 from djoser.views import UserViewSet
 
 from api.pagination import CustomPagination
@@ -230,26 +230,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     # @action(detail=False, permission_classes=[IsAuthenticated])
     # def download_shopping_cart(self, request):
-        user = request.user
-        if not user.shopping_cart.exists():
-            return Response(status=HTTP_400_BAD_REQUEST)
-        ingredients = AmountIngredient.objects.filter(
-            recipe__shopping_cart__user=user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(quantity=Sum('amount'))
-        today = timezone.now().day
-        shopping_list = (
-            f'Список покупок пользователя: {user}\n'
-            f'Дата: {today:%Y-%m-%d}\n'
-        )
-        shopping_list += '\n'.join([
-            f'- {ingredient["ingredient__name"]} - {ingredient["quantity"]} '
-            f'{ingredient["ingredient__measurement_unit"]}'
-            for ingredient in ingredients
-        ])
-        filename = f'{user}_shopping_list.txt'
-        response = HttpResponse(shopping_list, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename={filename}'
-        return response
+        # user = request.user
+        # if not user.shopping_cart.exists():
+        #     return Response(status=HTTP_400_BAD_REQUEST)
+        # ingredients = AmountIngredient.objects.filter(
+        #     recipe__shopping_cart__user=user
+        # ).values(
+        #     'ingredient__name',
+        #     'ingredient__measurement_unit'
+        # ).annotate(quantity=Sum('amount'))
+        # today = timezone.now().day
+        # shopping_list = (
+        #     f'Список покупок пользователя: {user}\n'
+        #     f'Дата: {today:%Y-%m-%d}\n'
+        # )
+        # shopping_list += '\n'.join([
+        #     f'- {ingredient["ingredient__name"]} - {ingredient["quantity"]} '
+        #     f'{ingredient["ingredient__measurement_unit"]}'
+        #     for ingredient in ingredients
+        # ])
+        # filename = f'{user}_shopping_list.txt'
+        # response = HttpResponse(shopping_list, content_type='text/plain')
+        # response['Content-Disposition'] = f'attachment; filename={filename}'
+        # return response
