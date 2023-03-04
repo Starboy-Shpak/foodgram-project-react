@@ -33,32 +33,42 @@ class FoodgramUsersViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     @action(
-        ['post', 'delete'], True, permission_classes=[IsAuthenticated],
-    )
-    def subscribe(self, request, id):
-        user = request.user
-        author = get_object_or_404(User, pk=id)
-
+        detail=True,
+        methods=['POST', 'DELETE'],
+        permission_classes=(IsAuthenticated,),
+        url_path='subscribe',
+        url_name='subscribe',)
+    def follow(self, request, id):
+        '''Подписка/отписка'''
+        author = get_object_or_404(User, id=id)
         if request.method == 'POST':
-            serializer = FollowSerializer(
-                author, data=request.data, context={'request': request}
-            )
+            serializer = FollowSerializer(author,
+                                          data=request.data,
+                                          context={"request": request})
             serializer.is_valid(raise_exception=True)
-            Subscription.objects.create(user=user, author=author)
+            Subscription.objects.create(user=request.user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         if request.method == 'DELETE':
-            get_object_or_404(Subscription, user=user, author=author).delete()
+            get_object_or_404(
+                Subscription,
+                user=request.user,
+                author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.data, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, permission_classes=[IsAuthenticated])
-    def subscriptions(self, request):
-        user = request.user
-        queryset = User.objects.filter(author__user=user)
-        pages = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(
-            pages, many=True, context={'request': request}
-        )
+    @action(
+        detail=False,
+        methods=['GET'],
+        permission_classes=(IsAuthenticated,),
+        url_path='subscriptions',
+        url_name='subscriptions',)
+    def follows(self, request):
+        '''Список подписок'''
+        queryset = User.objects.filter(author__user=request.user)
+        page = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(page,
+                                      many=True,
+                                      context={'request': request})
         return self.get_paginated_response(serializer.data)
 
 

@@ -46,48 +46,32 @@ class CustomUserSerializer(UserSerializer):
 
 class FollowSerializer(CustomUserSerializer):
 
-    recipes_count = SerializerMethodField()
-    recipes = SerializerMethodField()
+    recipes = SerializerMethodField('check_his_recipes')
+    recipes_count = SerializerMethodField('count_his_recipes')
 
     class Meta:
         model = User
         fields = (
-            'email', 'id', 'username', 'first_name', 'last_name',
-            'is_subscribed', 'recipes_count', 'recipes',
+            'email', 'id', 'username',
+            'first_name', 'last_name',
+            'is_subscribed', 'recipes',
+            'recipes_count',
         )
-        read_only_fields = ('email', 'username', 'first_name', 'last_name'),
+        read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def validate(self, data):
-        author_id = self.context.get(
-            'request'
-        ).parser_context.get('kwargs').get('id')
-        author = get_object_or_404(User, id=author_id)
-        user = self.context.get('request').user
-        if user.follower.filter(author=author_id).exists():
-            raise ValidationError(
-                detail='Подписка уже существует',
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        if user == author:
-            raise ValidationError(
-                detail='Нельзя подписаться на самого себя',
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        return data
-
-    def get_recipes_count(self, obj):
-        return obj.recipes.count()
-
-    def get_recipes(self, obj):
+    def check_his_recipes(self, obj):
         request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
+        if not request or request.user.is_anonymous:
+            return False
+        recipes_limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[: int(limit)]
-        serializer = FavoriteRecipesSerializer(
-            recipes, many=True, read_only=True,
-        )
-        return serializer.data
+        if recipes_limit:
+            recipes = (obj.recipes.all())[:int(recipes_limit)]
+        return RecipeReadSerializer(recipes, many=True).data
+
+    @staticmethod
+    def count_his_recipes(obj):
+        return obj.recipes.count()
 
 
 class TagSerializer(serializers.ModelSerializer):
