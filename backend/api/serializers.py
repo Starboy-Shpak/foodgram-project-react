@@ -121,7 +121,7 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeReadSerializer(serializers.ModelSerializer):
 
-    tag = TagSerializer(read_only=False, many=True)
+    tags = TagSerializer(read_only=False, many=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = AmountIngredientSerializer(
         many=True, source='in_recipes'
@@ -133,9 +133,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tag', 'author', 'ingredients', 'is_favorited',
-            'is_in_shopping_cart', 'title', 'image',
-            'discription', 'cooking_time',
+            'id', 'tags', 'author', 'ingredients', 'is_favorited',
+            'is_in_shopping_cart', 'name', 'image',
+            'text', 'cooking_time',
         )
 
     def get_is_favorited(self, obj):
@@ -154,7 +154,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class CreateRecipeSerializer(serializers.ModelSerializer):
 
     ingredients = AmountIngredientSerializer(many=True,)
-    tag = serializers.PrimaryKeyRelatedField(
+    tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all(),
         error_messages={'does_not_exist': 'Такого тега не существует'}
     )
@@ -165,8 +165,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tag', 'author', 'ingredients', 'title',
-            'image', 'discription', 'cooking_time',
+            'id', 'tags', 'author', 'ingredients', 'name',
+            'image', 'text', 'cooking_time',
         )
 
     def validate_tags(self, tags):
@@ -212,18 +212,18 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         AmountIngredient.objects.bulk_create(ingredient_list)
 
     def create(self, data):
-        tags = data.pop('tag')
+        tags = data.pop('tags')
         ingredients = data.pop('ingredients')
         recipe = Recipe.objects.create(author=self.context.get('request').user,
                                        **data)
         self.create_ingredients(recipe, ingredients)
-        recipe.tag.set(tags)
+        recipe.tags.set(tags)
         return recipe
 
     def update(self, instance, data):
-        if 'tag' in data:
-            instance.tag.set(
-                data.pop('tag'))
+        if 'tags' in data:
+            instance.tags.set(
+                data.pop('tags'))
         if 'ingredients' in data:
             ingredients = data.pop('ingredients')
             instance.ingredients.clear()

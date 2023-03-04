@@ -38,8 +38,8 @@ class Recipe(models.Model):
         User, models.CASCADE, 'author_recipes',
         verbose_name='Автор'
     )
-    title = models.CharField('Название рецепта', max_length=255,)
-    discription = models.TextField('Описание')
+    name = models.CharField('Название рецепта', max_length=255,)
+    text = models.TextField('Описание')
     pub_date = models.DateField(
         'Дата публикации', auto_now_add=True, editable=False
     )
@@ -49,7 +49,7 @@ class Recipe(models.Model):
         verbose_name='Ингредиенты',
         through='AmountIngredient',
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag, 'recipe_tags', verbose_name='Тэги'
     )
     cooking_time = models.PositiveIntegerField(
