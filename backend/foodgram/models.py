@@ -60,10 +60,10 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('title',)
+        ordering = ('name',)
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
 
 
 class AmountIngredient(models.Model):
