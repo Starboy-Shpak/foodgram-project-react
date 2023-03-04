@@ -16,7 +16,7 @@ from api.serializers import (CustomUserSerializer, FavouriteSerializer,
                              FollowSerializer, GetMyRecipeSerializer,
                              MyIngredientSerializer, MyTagSerializer,
                              PostMyRecipeSerializer, ShoppingListSerializer)
-from foodgram.models import (Favorite, Ingredient, Recipe, RecipeIngredients,
+from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
                              ShoppingList, Tag)
 from users.models import Follow, User
 
@@ -116,15 +116,15 @@ class RecipeViewSet(ModelViewSet):
         detail=True,
         methods=['POST'],
         permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, pk):
+    def shopping_list(self, request, pk):
         return self.post_action(
             ShoppingList,
             ShoppingListSerializer,
             request,
             pk)
 
-    @shopping_cart.mapping.delete
-    def delete_shopping_cart(self, request, pk):
+    @shopping_list.mapping.delete
+    def delete_shopping_list(self, request, pk):
         return self.delete_action(
             ShoppingList,
             request,
@@ -134,9 +134,9 @@ class RecipeViewSet(ModelViewSet):
         detail=False,
         methods=['GET'],
         permission_classes=(IsAuthenticated,),)
-    def download_shopping_cart(self, request):
-        queryset = RecipeIngredients.objects.filter(
-            recipe__shopping_cart__user=request.user
+    def download_shopping_list(self, request):
+        queryset = AmountIngredient.objects.filter(
+            recipe__shopping_list__user=request.user
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).order_by('ingredient__name').annotate(amount=Sum('amount'))

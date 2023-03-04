@@ -107,13 +107,13 @@ class GetMyRecipeSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     ingredients = SerializerMethodField('get_ingredients_for_recipe')
     is_favorited = SerializerMethodField('check_if_favourited')
-    is_in_shopping_cart = SerializerMethodField('check_if_in_cart')
+    is_in_shopping_list = SerializerMethodField('check_if_in_cart')
     image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients',
-                  'is_favorited', 'is_in_shopping_cart',
+                  'is_favorited', 'is_in_shopping_list',
                   'name', 'image', 'text', 'cooking_time',)
 
     def get_ingredients_for_recipe(self, obj):
@@ -131,7 +131,7 @@ class GetMyRecipeSerializer(ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return request.user.shopping_cart.filter(recipe=obj).exists()
+        return request.user.shopping_list.filter(recipe=obj).exists()
 
 
 class AddIngredientsToRecipe(ModelSerializer):
