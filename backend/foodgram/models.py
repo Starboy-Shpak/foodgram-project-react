@@ -119,7 +119,7 @@ class Favorite(AbstractModel):
                                     name='unique_in_favourite'), ]
 
     def __str__(self):
-        return f'{self.user}, рецепт {self.recipe} успешно добавлен в Избранное'
+        return f'{self.user}, рецепт {self.recipe} добавлен в Избранное'
 
 
 class ShoppingCart(AbstractModel):
