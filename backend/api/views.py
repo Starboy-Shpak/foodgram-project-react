@@ -21,7 +21,7 @@ from foodgram.models import (Favorite, Ingredient, Recipe, RecipeIngredients,
 from users.models import Follow, User
 
 
-class CustomUserViewSet(UserViewSet):
+class FoodgramUsersViewSet(UserViewSet):
     '''Вьюсет для пользователей'''
 
     queryset = User.objects.all()
@@ -173,7 +173,7 @@ class TagViewSet(ModelViewSet):
     pagination_class = None
 
 
-class IngredientViewSet(ModelViewSet):
+class IngredintViewSet(ModelViewSet):
     '''Вьюсет для ингредиентов'''
 
     queryset = Ingredient.objects.all()
