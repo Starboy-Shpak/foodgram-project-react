@@ -40,9 +40,7 @@ class FoodgramUsersViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
 
         if request.method == 'POST':
-            serializer = FollowSerializer(
-                author, data=request.data, context={'request': request}
-            )
+            serializer = FollowSerializer(author)
             serializer.is_valid(raise_exception=True)
             Subscription.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
