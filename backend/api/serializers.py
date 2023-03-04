@@ -63,7 +63,7 @@ class FollowSerializer(CustomUserSerializer):
         ).parser_context.get('kwargs').get('id')
         author = get_object_or_404(User, id=author_id)
         user = self.context.get('request').user
-        if user.follower.filter(author=author_id).exists():
+        if user.author.filter(author=author_id).exists():
             raise ValidationError(
                 detail='Подписка уже существует',
                 code=status.HTTP_400_BAD_REQUEST,
