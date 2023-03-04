@@ -18,7 +18,7 @@ from api.serializers import (CustomUserSerializer, FavouriteSerializer,
                              PostMyRecipeSerializer, ShoppingListSerializer)
 from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
                              ShoppingList, Tag)
-from users.models import Follow, User
+from users.models import Subscription, User
 
 
 class FoodgramUsersViewSet(UserViewSet):
@@ -42,11 +42,11 @@ class FoodgramUsersViewSet(UserViewSet):
                                           data=request.data,
                                           context={"request": request})
             serializer.is_valid(raise_exception=True)
-            Follow.objects.create(user=request.user, author=author)
+            Subscription.objects.create(user=request.user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             get_object_or_404(
-                Follow,
+                Subscription,
                 user=request.user,
                 author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
