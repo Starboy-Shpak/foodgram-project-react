@@ -15,9 +15,9 @@ from api.permissions import AuthorPermission
 from api.serializers import (CustomUserSerializer, FavouriteSerializer,
                              FollowSerializer, GetMyRecipeSerializer,
                              MyIngredientSerializer, MyTagSerializer,
-                             PostMyRecipeSerializer, ShoppingListSerializer)
+                             PostMyRecipeSerializer, ShoppingCartSerializer)
 from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
-                             ShoppingList, Tag)
+                             ShoppingCart, Tag)
 from users.models import Subscription, User
 
 
@@ -118,15 +118,15 @@ class RecipeViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         return self.post_action(
-            ShoppingList,
-            ShoppingListSerializer,
+            ShoppingCart,
+            ShoppingCartSerializer,
             request,
             pk)
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
         return self.delete_action(
-            ShoppingList,
+            ShoppingCart,
             request,
             pk)
 

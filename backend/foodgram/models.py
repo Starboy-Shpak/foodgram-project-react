@@ -93,50 +93,44 @@ class AmountIngredient(models.Model):
         return f'{self.amount} {self.ingredient}'
 
 
-class Favorite(models.Model):
+class AbstractModel(models.Model):
+
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE, related_name='favorites_user',
-        verbose_name='Пользователь'
-    )
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь')
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='favorites_recipe',
-        verbose_name='Рецепт'
-    )
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт')
 
     class Meta:
+        abstract = True
+
+
+class Favorite(AbstractModel):
+
+    class Meta(AbstractModel.Meta):
         default_related_name = 'favorites'
-        verbose_name = 'Избранное'
+        verbose_name = 'Избранный рецепт'
+        verbose_name_plural = 'Избранные рецепты'
         constraints = [
-            UniqueConstraint(
-                fields=['user', 'recipe'],
-                name='unique_favorite_recipe'
-            )
-        ]
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_in_favourite'), ]
 
     def __str__(self):
-        return f'{self.user} добавил в избранное "{self.recipe}"'
+        return f'{self.user}, рецепт {self.recipe} успешно добавлен в Избранное'
 
 
-class ShoppingList(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='shopping_user',
-        verbose_name='Пользователь'
-    )
-    recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='shopping_recipe',
-        verbose_name='Рецепт'
-    )
+class ShoppingCart(AbstractModel):
 
-    class Meta:
+    class Meta(AbstractModel.Meta):
         default_related_name = 'shopping_cart'
-        verbose_name = 'Список покупок'
-        verbose_name_plural = 'Список покупок'
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
         constraints = [
-            UniqueConstraint(
-                fields=['user', 'recipe'], name='unique_shopping_cart'
-            )
-        ]
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_recipe_in_cart'), ]
 
     def __str__(self):
-        return f'{self.user} добавил "{self.recipe}" в список покупок'
+        return f'{self.user}, рецепт {self.recipe} успешно добавлен в Корзину'

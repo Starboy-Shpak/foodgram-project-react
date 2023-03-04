@@ -7,7 +7,7 @@ from rest_framework.serializers import (IntegerField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField)
 
 from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
-                             ShoppingList, Tag)
+                             ShoppingCart, Tag)
 from users.models import User
 
 
@@ -251,15 +251,15 @@ class FavouriteSerializer(ModelSerializer):
             context=self.context).data
 
 
-class ShoppingListSerializer(ModelSerializer):
+class ShoppingCartSerializer(ModelSerializer):
     '''Сериалайзер добавления в корзину'''
 
     class Meta:
-        model = ShoppingList
+        model = ShoppingCart
         fields = ('user', 'recipe')
 
     def validate(self, data):
-        if ShoppingList.objects.filter(
+        if ShoppingCart.objects.filter(
             user=data.get('user'),
             recipe=data.get('recipe')
         ).exists():
