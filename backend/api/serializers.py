@@ -7,7 +7,7 @@ from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
 from foodgram.models import (AmountIngredient, Ingredient, Recipe,
-                             ShoppingList, Tag)
+                             ShoppingList, Tag, Favorite)
 from users.models import Subscription
 
 User = get_user_model()
@@ -18,16 +18,12 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            'password',
+            'email', 'username', 'first_name', 'last_name', 'password',
         )
 
 
 class CustomUserSerializer(UserSerializer):
+
     is_subscribed = SerializerMethodField()
 
     class Meta:
@@ -49,6 +45,7 @@ class CustomUserSerializer(UserSerializer):
 
 
 class FollowSerializer(CustomUserSerializer):
+
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
@@ -108,6 +105,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class AmountIngredientSerializer(serializers.ModelSerializer):
+
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
@@ -122,6 +120,7 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
+
     tag = TagSerializer(read_only=False, many=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = AmountIngredientSerializer(
@@ -153,6 +152,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
+
     ingredients = AmountIngredientSerializer(many=True,)
     tag = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all(),
@@ -214,9 +214,10 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def create(self, data):
         tags = data.pop('tag')
         ingredients = data.pop('ingredients')
-        recipe = Recipe.objects.create(**data)
-        recipe.tag.set(tags)
+        recipe = Recipe.objects.create(author=self.context.get('request').user,
+            **data)
         self.create_ingredients(recipe, ingredients)
+        recipe.tag.set(tags)
         return recipe
 
     def update(self, instance, data):
@@ -238,8 +239,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 class FavoriteRecipesSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipe
-        fields = ('id', 'title', 'image', 'cooking_time')
+        model = Favorite
+        fields = ('user', 'recipe')
 
     def validate(self, data):
         user = data['user']
