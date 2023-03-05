@@ -40,8 +40,8 @@ class Recipe(models.Model):
     )
     name = models.CharField('Название рецепта', max_length=255,)
     text = models.TextField('Описание')
-    pub_date = models.DateField(
-        'Дата публикации', auto_now_add=True, editable=False
+    pub_date = models.DateTimeField(
+        'Дата публикации', auto_now_add=True, db_index=True
     )
     ingredients = models.ManyToManyField(
         Ingredient,
