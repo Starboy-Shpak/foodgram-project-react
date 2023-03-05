@@ -69,13 +69,6 @@ class FoodgramUsersViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-        # queryset = User.objects.filter(following__user=request.user)
-        # page = self.paginate_queryset(queryset)
-        # serializer = FollowSerializer(page,
-        #                               many=True,
-        #                               context={'request': request})
-        # return self.get_paginated_response(serializer.data)
-
 
 class RecipeViewSet(ModelViewSet):
     '''Вьюсет для рецептов'''

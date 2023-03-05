@@ -58,10 +58,6 @@ class FollowSerializer(CustomUserSerializer):
 
     recipes = RecipeAbbSerializer(many=True, read_only=True)
     recipes_count = SerializerMethodField()
-    # recipes_count = serializers.IntegerField(
-    #     source='recipes.count',
-    #     read_only=True
-    # )
 
     class Meta:
         model = User
