@@ -28,10 +28,12 @@ class User(AbstractUser):
 
 class Subscription(models.Model):
     author = models.ForeignKey(
-        User, models.CASCADE, 'following', verbose_name='Автор',
+        User, models.CASCADE, related_name='following', verbose_name='Автор',
     )
     user = models.ForeignKey(
-        User, models.CASCADE, 'follower', verbose_name='Подписчик',
+        User, models.CASCADE,
+        related_name='follower',
+        verbose_name='Подписчик',
     )
     date_added = models.DateField(
         'Дата подписки', auto_now_add=True, editable=False
