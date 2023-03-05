@@ -1,9 +1,9 @@
 # FOODGRAM
 ![yamdb_workflow](https://github.com/Starboy-Shpak/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-Foodgram - сайт для создания просмотра и публикации рецептов
+Foodgram - сайт для создания, просмотра и публикации рецептов.
 
-Проект доступен по: [ссылке](http://51.250.18.184/)
+# Проект доступен по: [ССЫЛКЕ](http://51.250.18.184/)
 
 ## Что проект умеет?
 
@@ -43,11 +43,7 @@ python manage.py createsuperuser
 ```
 python manage.py collectstatic --no-input
 ```
-Создаем дамп базы данных (нет в текущем репозитории):
-```
-python manage.py dumpdata > dumpPostrgeSQL.json
-```
 
 ***
-Автор: Вадим Шпак.
+Автор бэкенда: Вадим Шпак.
 Связаться со мной можно в [телеграм](https://t.me/starboy_shpak/)
