@@ -60,12 +60,21 @@ class FoodgramUsersViewSet(UserViewSet):
         url_name='subscriptions',)
     def follows(self, request):
         '''Список подписок'''
-        queryset = User.objects.filter(following__user=request.user)
-        page = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(page,
-                                      many=True,
-                                      context={'request': request})
+        user = request.user
+        queryset = User.objects.filter(subscribers=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(
+            pages,
+            many=True,
+        )
         return self.get_paginated_response(serializer.data)
+
+        # queryset = User.objects.filter(following__user=request.user)
+        # page = self.paginate_queryset(queryset)
+        # serializer = FollowSerializer(page,
+        #                               many=True,
+        #                               context={'request': request})
+        # return self.get_paginated_response(serializer.data)
 
 
 class RecipeViewSet(ModelViewSet):
