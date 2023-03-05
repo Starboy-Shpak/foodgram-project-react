@@ -23,7 +23,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 class CustomUserSerializer(UserSerializer):
     '''Сериалайзер пользователя'''
 
-    is_subscribed = SerializerMethodField('check_subscribiton')
+    is_subscribed = SerializerMethodField()
 
     class Meta:
         model = User
@@ -32,7 +32,7 @@ class CustomUserSerializer(UserSerializer):
             'first_name', 'last_name',
             'is_subscribed',)
 
-    def check_subscribiton(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -56,6 +56,7 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
 
+    is_subscribed = SerializerMethodField()
     recipes = RecipeAbbSerializer(many=True, read_only=True)
     recipes_count = serializers.IntegerField(
         source='recipes.count',
@@ -71,6 +72,12 @@ class FollowSerializer(CustomUserSerializer):
             'recipes_count',
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return request.user.follower.filter(author=obj).exists()
 
 
 class MyTagSerializer(ModelSerializer):
