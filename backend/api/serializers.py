@@ -40,6 +40,7 @@ class CustomUserSerializer(UserSerializer):
 
 
 class RecipeAbbSerializer(serializers.ModelSerializer):
+    '''Сериалайзер быстого просмотра рецепта'''
 
     class Meta:
         model = Recipe
@@ -60,7 +61,6 @@ class FollowSerializer(CustomUserSerializer):
         source='recipes.count',
         read_only=True
     )
-    # recipes_count = SerializerMethodField('count_his_recipes')
 
     class Meta:
         model = User
@@ -71,34 +71,6 @@ class FollowSerializer(CustomUserSerializer):
             'recipes_count',
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
-
-    # def get_recipes(self, obj):
-    #     request = self.context.get('request')
-    #     if request.GET.get('recipes_limit'):
-    #         recipes_limit = int(request.GET.get('recipes_limit'))
-    #         queryset = Recipe.objects.filter(
-    #             author=obj.author)[:recipes_limit]
-    #     else:
-    #         queryset = Recipe.objects.filter(
-    #             author=obj.author)
-    #     serializer = RecipeAbbSerializer(
-    #         queryset, read_only=True, many=True
-    #     )
-    #     return serializer.data
-
-    # def check_his_recipes(self, obj):
-    #     request = self.context.get('request')
-    #     if not request or request.user.is_anonymous:
-    #         return False
-    #     recipes_limit = request.GET.get('recipes_limit')
-    #     recipes = obj.recipes.all()
-    #     if recipes_limit:
-    #         recipes = (obj.recipes.all())[:int(recipes_limit)]
-    #     return GetMyRecipeSerializer(recipes, many=True).data
-
-    # @staticmethod
-    # def count_his_recipes(obj):
-    #     return obj.recipes.count()
 
 
 class MyTagSerializer(ModelSerializer):
