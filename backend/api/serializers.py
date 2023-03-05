@@ -56,12 +56,12 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
 
-    is_subscribed = SerializerMethodField()
     recipes = RecipeAbbSerializer(many=True, read_only=True)
-    recipes_count = serializers.IntegerField(
-        source='recipes.count',
-        read_only=True
-    )
+    recipes_count = SerializerMethodField()
+    # recipes_count = serializers.IntegerField(
+    #     source='recipes.count',
+    #     read_only=True
+    # )
 
     class Meta:
         model = User
@@ -78,6 +78,9 @@ class FollowSerializer(CustomUserSerializer):
         if not request or request.user.is_anonymous:
             return False
         return request.user.follower.filter(author=obj).exists()
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
 
 
 class MyTagSerializer(ModelSerializer):
