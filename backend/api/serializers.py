@@ -2,6 +2,7 @@ from django.core.validators import MinValueValidator, ValidationError
 from django.db import IntegrityError
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import (IntegerField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField)
@@ -38,10 +39,23 @@ class CustomUserSerializer(UserSerializer):
         return request.user.follower.filter(author=obj).exists()
 
 
+class RecipeAbbSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time'
+        )
+        read_only = '__all__',
+
+
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
 
-    recipes = SerializerMethodField('check_his_recipes')
+    recipes = RecipeAbbSerializer(many=True, read_only=True)
     recipes_count = SerializerMethodField('count_his_recipes')
 
     class Meta:
@@ -54,15 +68,15 @@ class FollowSerializer(CustomUserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def check_his_recipes(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        recipes_limit = request.GET.get('recipes_limit')
-        recipes = obj.recipes.all()
-        if recipes_limit:
-            recipes = (obj.recipes.all())[:int(recipes_limit)]
-        return GetMyRecipeSerializer(recipes, many=True).data
+    # def check_his_recipes(self, obj):
+    #     request = self.context.get('request')
+    #     if not request or request.user.is_anonymous:
+    #         return False
+    #     recipes_limit = request.GET.get('recipes_limit')
+    #     recipes = obj.recipes.all()
+    #     if recipes_limit:
+    #         recipes = (obj.recipes.all())[:int(recipes_limit)]
+    #     return GetMyRecipeSerializer(recipes, many=True).data
 
     @staticmethod
     def count_his_recipes(obj):
