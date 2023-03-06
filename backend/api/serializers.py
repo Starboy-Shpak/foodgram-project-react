@@ -81,6 +81,7 @@ class FollowSerializer(CustomUserSerializer):
         if recipes_limit:
             recipes = (obj.recipes.all())[:int(recipes_limit)]
         return RecipeAbbSerializer(recipes, many=True).data
+
         # request = self.context.get('request')
         # recipes = Recipe.objects.filter(author=obj.author)
         # limit = request.GET.get('recipes_limit')
@@ -109,7 +110,8 @@ class FollowSerializer(CustomUserSerializer):
         # return False
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
+        return obj.recipes.count()
+        # return Recipe.objects.filter(author=obj.author).count()
 
 
 class MyTagSerializer(ModelSerializer):
