@@ -80,8 +80,8 @@ class FollowSerializer(CustomUserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
+        # if not request or request.user.is_anonymous:
+        #     return False
         recipes = Recipe.objects.filter(author=obj)
         limit = request.query_params.get('recipes_limit')
         if limit:
