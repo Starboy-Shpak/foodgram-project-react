@@ -33,11 +33,12 @@ class CustomUserSerializer(UserSerializer):
             'is_subscribed',)
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
         return Subscription.objects.filter(
-            user=user, author=obj).exists()
+            User=request.user, author=obj
+        ).exists()
 
 
 class RecipeAbbSerializer(serializers.ModelSerializer):
@@ -56,7 +57,7 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
-    # ПРОВЕРКА ПРОВЕРКА ПРОВЕРКА
+
     is_subscribed = SerializerMethodField(read_only=True)
     recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
@@ -84,13 +85,20 @@ class FollowSerializer(CustomUserSerializer):
         ).data
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        author = obj.author
-        if user.is_authenticated:
-            return Subscription.objects.filter(
-                user=user, author=author
-            ).exists()
-        return False
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return Subscription.objects.filter(
+            User=request.user, author=obj
+        ).exists()
+
+        # user = self.context.get('request').user
+        # author = obj.author
+        # if user.is_authenticated:
+        #     return Subscription.objects.filter(
+        #         user=user, author=author
+        #     ).exists()
+        # return False
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
