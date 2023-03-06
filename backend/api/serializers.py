@@ -56,9 +56,7 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
 
-    is_subscribed = serializers.SerializerMethodField()
-    # recipes = RecipeAbbSerializer(many=True, read_only=True)
-    recipes = SerializerMethodField()
+    recipes = RecipeAbbSerializer(many=True, read_only=True)
     recipes_count = SerializerMethodField()
 
     class Meta:
@@ -72,26 +70,13 @@ class FollowSerializer(CustomUserSerializer):
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
     def get_is_subscribed(self, obj):
-        return True
-        # request = self.context.get('request')
-        # if not request or request.user.is_anonymous:
-        #     return False
-        # return request.user.follower.filter(author=obj).exists()
-
-    def get_recipes(self, obj):
         request = self.context.get('request')
-        # if not request or request.user.is_anonymous:
-        #     return False
-        recipes = Recipe.objects.filter(author=obj)
-        limit = request.query_params.get('recipes_limit')
-        if limit:
-            recipes = recipes[:int(limit)]
-        return RecipeAbbSerializer(
-            recipes, many=True, context={'request': request}).data
+        if not request or request.user.is_anonymous:
+            return False
+        return request.user.follower.filter(author=obj).exists()
 
     def get_recipes_count(self, obj):
-        # return obj.recipes.count()
-        return Recipe.objects.filter(author=obj).count()
+        return obj.recipes.count()
 
 
 class MyTagSerializer(ModelSerializer):
