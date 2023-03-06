@@ -37,7 +37,7 @@ class CustomUserSerializer(UserSerializer):
         if not request or request.user.is_anonymous:
             return False
         return Subscription.objects.filter(
-            User=request.user, author=obj
+            user=request.user, author=obj
         ).exists()
 
 
@@ -89,7 +89,7 @@ class FollowSerializer(CustomUserSerializer):
         if not request or request.user.is_anonymous:
             return False
         return Subscription.objects.filter(
-            User=request.user, author=obj
+            user=request.user, author=obj
         ).exists()
 
         # user = self.context.get('request').user
