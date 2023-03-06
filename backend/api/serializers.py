@@ -9,7 +9,7 @@ from rest_framework.serializers import (IntegerField, ModelSerializer,
 
 from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
                              ShoppingCart, Tag)
-from users.models import User
+from users.models import User, Subscription
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -75,7 +75,10 @@ class FollowSerializer(CustomUserSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return request.user.follower.filter(author=obj).exists()
+        Subscription.objects.filter(
+            user=request.user, author=obj
+        ).exists()
+        # return request.user.follower.filter(author=obj).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
