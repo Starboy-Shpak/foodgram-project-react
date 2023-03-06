@@ -74,15 +74,23 @@ class FollowSerializer(CustomUserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        recipes = Recipe.objects.filter(author=obj.author)
-        limit = request.GET.get('recipes_limit')
-        if limit:
-            recipes = recipes[:int(limit)]
-        return RecipeAbbSerializer(
-            recipes,
-            many=True,
-            context={'request': request}
-        ).data
+        if not request or request.user.is_anonymous:
+            return False
+        recipes_limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if recipes_limit:
+            recipes = (obj.recipes.all())[:int(recipes_limit)]
+        return RecipeAbbSerializer(recipes, many=True).data
+        # request = self.context.get('request')
+        # recipes = Recipe.objects.filter(author=obj.author)
+        # limit = request.GET.get('recipes_limit')
+        # if limit:
+        #     recipes = recipes[:int(limit)]
+        # return RecipeAbbSerializer(
+        #     recipes,
+        #     many=True,
+        #     context={'request': request}
+        # ).data
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
