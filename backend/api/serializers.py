@@ -9,7 +9,7 @@ from rest_framework.serializers import (IntegerField, ModelSerializer,
 
 from foodgram.models import (Favorite, Ingredient, Recipe, AmountIngredient,
                              ShoppingCart, Tag)
-from users.models import User
+from users.models import User, Subscription
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -33,10 +33,10 @@ class CustomUserSerializer(UserSerializer):
             'is_subscribed',)
 
     def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
-        return request.user.follower.filter(author=obj).exists()
+        return Subscription.objects.filter(user=user, author=obj).exists()
 
 
 class RecipeAbbSerializer(serializers.ModelSerializer):
@@ -56,7 +56,8 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
 
-    recipes = RecipeAbbSerializer(many=True, read_only=True)
+    # recipes = RecipeAbbSerializer(many=True, read_only=True)
+    recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
 
     class Meta:
@@ -69,11 +70,14 @@ class FollowSerializer(CustomUserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def get_is_subscribed(self, obj):
+    def get_recipes(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return request.user.follower.filter(author=obj).exists()
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if limit:
+            recipes = recipes[: int(limit)]
+        serializer = RecipeAbbSerializer(recipes, many=True, read_only=True)
+        return serializer.data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
