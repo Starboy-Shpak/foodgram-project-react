@@ -56,7 +56,7 @@ class RecipeAbbSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(CustomUserSerializer):
     '''Сериалайзер функции подписки'''
-
+    # ПРОВЕРКА ПРОВЕРКА ПРОВЕРКА
     is_subscribed = SerializerMethodField(read_only=True)
     recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
