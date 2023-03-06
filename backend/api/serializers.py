@@ -76,7 +76,7 @@ class FollowSerializer(CustomUserSerializer):
         if not request or request.user.is_anonymous:
             return False
         return request.user.follower.filter(author=obj).exists()
-    
+
     def get_recipes(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
